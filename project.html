@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IOBM Lost & Found Portal</title>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #ffffff;
+    color: #2c2c2c;
+}
+
+/* ===== COLORS ===== */
+:root {
+    --accent: #ff0000;
+    --light: #ffcccc;
+}
+
+/* ===== LANDING PAGE ===== */
+#landing-page {
+    min-height: 100vh;
+    background: url("https://theazb.com/wp-content/uploads/2024/04/IoBM-Campus-Picture-1.jpg") no-repeat center center/cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.banner {
+    width: 100%;
+    padding: 60px 20px;
+    background: rgba(0,0,0,0.2);
+    border-bottom: 4px solid var(--accent);
+    color: white;
+}
+
+.portal-options {
+    display: flex;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.portal-card {
+    background: var(--accent);
+    color: white;
+    padding: 35px;
+    width: 280px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.portal-card:hover {
+    transform: translateY(-8px);
+}
+
+/* ===== MAIN APP ===== */
+#main-app {
+    display: none;
+    min-height: 100vh;
+    padding: 20px;
+    background: url("IoBM-Campus-Picture-1.jpg") no-repeat center center/cover;
+    position: relative;
+}
+
+/* white overlay for readability */
+#main-app::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.95);
+    z-index: 0;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== HEADER ===== */
+header {
+    padding: 25px;
+    text-align: center;
+    color: var(--accent);
+    position: relative;
+}
+
+.back-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* ===== NAV ===== */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+}
+
+.nav-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: var(--light);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.nav-btn.active {
+    background: var(--accent);
+    color: white;
+}
+
+/* ===== CONTENT ===== */
+.content { padding: 30px; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* ===== FORMS ===== */
+.form-group { margin-bottom: 15px; }
+label { display: block; font-weight: 600; margin-bottom: 5px; }
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* ===== TABLE ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+th {
+    background: var(--accent);
+    color: white;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: white;
+    font-size: 12px;
+}
+
+.lost-bg { background: #c0392b; }
+.found-bg { background: #27ae60; }
+</style>
+</head>
+
+<body>
+
+<!-- ===== LANDING PAGE ===== -->
+<div id="landing-page">
+    <div class="banner">
+        <h1>IOBM Lost & Found System</h1>
+        <p>Institute of Business Management</p>
+    </div>
+
+    <h2 style="margin-top:30px;">Select Portal</h2>
+
+    <div class="portal-options">
+        <div class="portal-card" onclick="enterPortal('student')">
+            <h2>Student Portal</h2>
+            <p>Report lost or found items</p>
+        </div>
+
+        <div class="portal-card" onclick="enterPortal('management')">
+            <h2>Management Portal</h2>
+            <p>View all reports</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="main-app">
+<div class="container">
+
+<header>
+    <h1 id="portal-title"></h1>
+    <p>IOBM Lost & Found Portal</p>
+    <button class="back-btn" onclick="goBack()">Logout</button>
+</header>
+
+<nav id="main-nav"></nav>
+
+<div class="content">
+
+<!-- HOME -->
+<div id="home" class="page active">
+    <h2>Dashboard</h2>
+    <p>Welcome to the official IOBM Lost & Found Management System.</p>
+</div>
+
+<!-- LOST -->
+<div id="report-lost" class="page">
+    <h2>Report Lost Item</h2>
+    <div class="form-group">
+        <label>Item Name</label>
+        <input type="text">
+    </div>
+    <div class="form-group">
+        <label>Last Seen Location</label>
+        <input type="text">
+    </div>
+    <button class="btn-submit">Submit Lost Report</button>
+</div>
+
+<!-- FOUND -->
+<div id="report-found" class="page">
+    <h2>Report Found Item</h2>
+    <div class="form-group">
+        <label>Item Description</label>
+        <input type="text">
+    </div>
+    <div class="form-group">
+        <label>Found Location</label>
+        <input type="text">
+    </div>
+    <button class="btn-submit">Submit Found Report</button>
+</div>
+
+<!-- RECORDS -->
+<div id="view-records" class="page">
+    <h2>All Records</h2>
+    <table>
+        <tr>
+            <th>Item</th>
+            <th>Location</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>Calculator</td>
+            <td>CBM Lab</td>
+            <td><span class="badge found-bg">Found</span></td>
+        </tr>
+        <tr>
+            <td>Wallet</td>
+            <td>Cafeteria</td>
+            <td><span class="badge lost-bg">Lost</span></td>
+        </tr>
+    </table>
+</div>
+
+<!-- ABOUT -->
+<div id="about" class="page">
+    <h2>About</h2>
+    <p>This system manages lost and found items within the IOBM campus.</p>
+</div>
+
+<!-- HELP -->
+<div id="contact" class="page">
+    <h2>Help & Support</h2>
+    <textarea placeholder="Write your message"></textarea>
+    <button class="btn-submit">Send</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+function enterPortal(type) {
+    document.getElementById("landing-page").style.display = "none";
+    document.getElementById("main-app").style.display = "block";
+
+    let nav = document.getElementById("main-nav");
+    let title = document.getElementById("portal-title");
+
+    if(type === "student") {
+        title.innerText = "Student Portal";
+        nav.innerHTML = `
+        <button class="nav-btn active" onclick="showPage('home',this)">Home</button>
+        <button class="nav-btn" onclick="showPage('report-lost',this)">Lost</button>
+        <button class="nav-btn" onclick="showPage('report-found',this)">Found</button>
+        <button class="nav-btn" onclick="showPage('about',this)">About</button>
+        <button class="nav-btn" onclick="showPage('contact',this)">Help</button>`;
+    } else {
+        title.innerText = "Management Portal";
+        nav.innerHTML = `
+        <button class="nav-btn active" onclick="showPage('home',this)">Dashboard</button>
+        <button class="nav-btn" onclick="showPage('view-records',this)">Records</button>
+        <button class="nav-btn" onclick="showPage('about',this)">About</button>`;
+    }
+}
+
+function showPage(id, btn) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+}
+
+function goBack() {
+    document.getElementById("main-app").style.display = "none";
+    document.getElementById("landing-page").style.display = "flex";
+}
+</script>
+
+</body>
+</html>
